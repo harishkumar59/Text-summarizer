@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Text Summarizer</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+        textarea { width: 80%; height: 100px; margin: 10px; padding: 10px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        #summary { margin-top: 20px; font-size: 18px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>🧠 AI Text Summarizer</h2>
+    <textarea id="textInput" placeholder="Enter long text..."></textarea><br>
+    <button onclick="summarizeText()">Summarize</button>
+    <p id="summary">Summary will appear here...</p>
+
+    <script>
+        async function summarizeText() {
+            const text = document.getElementById("textInput").value;
+            if (!text) { alert("Please enter text"); return; }
+
+            const response = await fetch("https://api-inference.huggingface.co/models/facebook/bart-large-cnn", {
+                method: "POST",
+                headers: { 
+                    "Authorization": "Bearer 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", 
+                    "Content-Type": "application/json" 
+                },
+                body: JSON.stringify({ inputs: text })
+            });
+
+            const data = await response.json();
+            if (data[0] && data[0].summary_text) {
+                document.getElementById("summary").innerText = "Summary: " + data[0].summary_text;
+            } else {
+                document.getElementById("summary").innerText = "Error in summarization.";
+            }
+        }
+    </script>
+</body>
+</html>
